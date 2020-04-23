@@ -13,7 +13,7 @@ module.exports = fastifyPlugin((fastify, opts, done) => {
   const beanify = new Beanify(beanifyEnvOptions())
 
   for (let dir of autoLoad) {
-    fastify.register(beanifyAutoload,{
+    beanify.register(beanifyAutoload,{
       dir:path.join(__dirname,"../../",dir)
     })
   }
