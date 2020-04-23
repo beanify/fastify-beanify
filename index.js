@@ -4,7 +4,7 @@ const Beanify = require('beanify')
 const beanifyAutoload = require("beanify-autoload")
 const beanifyEnvOptions = require('beanify-env-options')
 
-const path=require("path")
+const path = require("path")
 
 module.exports = fastifyPlugin((fastify, opts, done) => {
 
@@ -13,8 +13,8 @@ module.exports = fastifyPlugin((fastify, opts, done) => {
   const beanify = new Beanify(beanifyEnvOptions())
 
   for (let dir of autoLoad) {
-    beanify.register(beanifyAutoload,{
-      dir:path.join(__dirname,"../../",dir)
+    beanify.register(beanifyAutoload, {
+      dir: path.join(__dirname, "../../", dir)
     })
   }
 
@@ -42,7 +42,7 @@ module.exports = fastifyPlugin((fastify, opts, done) => {
   })
 
 
-
+  beanify.decorate('fastify', fastify)
   beanify.ready((err) => {
     if (!err) {
       beanify.addHook("onError", (err) => {
