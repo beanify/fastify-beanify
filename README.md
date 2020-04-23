@@ -7,7 +7,7 @@
 * BEANIFY_NATS_USER
 * BEANIFY_NATS_PASS
 * BEANIFY_NATS_TOKEN
-* BEANIFY_LOG_LEVEL
+* etc...
 
 __note:__[beanify-env-options](https://github.com/beanjs-framework/beanify-env-options)
 

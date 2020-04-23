@@ -1,45 +1,58 @@
-const fastifyPlugin=require('fastify-plugin')
+const fastifyPlugin = require('fastify-plugin')
 
-const Beanify=require('beanify')
-const beanifyEnvOptions=require('beanify-env-options')
+const Beanify = require('beanify')
+const beanifyAutoload = require("beanify-autoload")
+const beanifyEnvOptions = require('beanify-env-options')
 
-module.exports=fastifyPlugin((fastify,opts,done)=>{
-  const beanify=new Beanify(beanifyEnvOptions())
+const path=require("path")
 
-  fastify.addHook('onClose',()=>{
+module.exports = fastifyPlugin((fastify, opts, done) => {
+
+  const autoLoad = opts.autoLoad || []
+
+  const beanify = new Beanify(beanifyEnvOptions())
+
+  for (let dir of autoLoad) {
+    fastify.register(beanifyAutoload,{
+      dir:path.join(__dirname,"../../",dir)
+    })
+  }
+
+
+  fastify.addHook('onClose', () => {
     fastify.log.info('closing beanify')
-    beanify.close(()=>{
+    beanify.close(() => {
       fastify.log.info('beanify closed')
     })
   })
 
-  fastify.decorate('beanify',beanify)
-  fastify.decorateRequest('beanify',beanify)
-  fastify.decorateReply('inject',function (opts){
+  fastify.decorate('beanify', beanify)
+  fastify.decorateRequest('beanify', beanify)
+  fastify.decorateReply('inject', function (opts) {
     return beanify
-            .inject(opts)
-            .then((res)=>{
-              this.send(res)
-              return res
-            })
-            .catch((err)=>{
-              this.code(400)
-              this.send(err)
-            })
+      .inject(opts)
+      .then((res) => {
+        this.send(res)
+        return res
+      })
+      .catch((err) => {
+        this.code(400)
+        this.send(err)
+      })
   })
 
 
 
-  beanify.ready((err)=>{
-    if(!err){
-      beanify.addHook("onError",(err)=>{
+  beanify.ready((err) => {
+    if (!err) {
+      beanify.addHook("onError", (err) => {
         fastify.log.error(err)
       })
-    }else{
-      fastify.log.error("beanify not ready:"+err.message)
+    } else {
+      fastify.log.error("beanify not ready:" + err.message)
     }
     done(err)
   })
-},{
-  name:'fastify-beanify'
+}, {
+  name: 'fastify-beanify'
 })

@@ -1,6 +1,6 @@
 {
   "name": "fastify-beanify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "fastify beanify-micro-service plugin",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/beanjs-framework/fastify-beanify#readme",
   "dependencies": {
     "beanify": "^1.1.9",
+    "beanify-autoload": "^1.0.2",
     "beanify-env-options": "^1.0.1",
     "fastify-plugin": "^1.6.0"
   },
