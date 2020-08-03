@@ -7,16 +7,10 @@ const fastify=Fastify({
   logger: true
 })
 
-fastify.register(fastifyBeanify,{})
+fastify.register(fastifyBeanify,{
+  autoLoad:['services']
+})
 fastify.register(fastifyPlugin((fastify,opts,done)=>{
-
-  fastify.beanify.route({
-    url:'fastifyBeanify.math.add',
-  },({body},res)=>{
-    // res(new Error("not found"),body.a+body.b)
-    // res(new Error("not found"))
-    res(null,body.a+body.b)
-  })
 
   fastify.get('/add',(req,res)=>{
     // console.log(req.inject)

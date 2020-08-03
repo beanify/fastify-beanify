@@ -9,7 +9,6 @@
 * BEANIFY_NATS_TOKEN
 * etc...
 
-__note:__[beanify-env-options](https://github.com/beanjs-framework/beanify-env-options)
 
 ## install
 ```bash
@@ -27,15 +26,10 @@ const fastify=Fastify({
   logger: true
 })
 
-fastify.register(fastifyBeanify,{})
+fastify.register(fastifyBeanify,{
+  autoLoad:[]
+})
 fastify.register(fastifyPlugin((fastify,opts,done)=>{
-
-  fastify.beanify.route({
-    url:'fastifyBeanify.math.add',
-  },({body},res)=>{
-    // res(new Error("not found"))
-    res(null,body.a+body.b)
-  })
 
   fastify.get('/add',(req,res)=>{
     res.inject({
