@@ -18,7 +18,7 @@ yarn add fastify-beanify
 
 ```javascript
 const { fastify: Fastify } = require('fastify')
-const Beanify = require('./index')
+const Beanify = require('fastify-beanify')
 
 const fastify = Fastify({
   logger: true
@@ -54,7 +54,7 @@ fastify.listen(3000)
 ## Options
 
 - `beanify`: beanify configuration.check [here](https://github.com/beanify/beanify/blob/master/docs/Beanify.md#factory)
-- `autoload`: (array) beanify configuration.default []
+- `autoload`: (array) beanify plug-ins that need to be loaded automatically.default []
   - `dir`: (required) - Base directory containing plugins to be loaded
   - `dirAsScope`: Make each directory a new scope.default false
 

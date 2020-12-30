@@ -1,6 +1,6 @@
 {
   "name": "fastify-beanify",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "fastify beanify-micro-service plugin",
   "main": "index.js",
   "scripts": {
