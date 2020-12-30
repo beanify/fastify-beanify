@@ -1,22 +1,24 @@
-const fastifyPlugin = require('fastify-plugin')
-
 const Beanify = require('beanify')
-const beanifyAutoload = require("beanify-autoload")
+const AutoLoad = require('beanify-autoload')
+const path = require('path')
+const fp = require('fastify-plugin')
 
-const path = require("path")
+module.exports = fp(function (fastify, opts, done) {
+  const loads = opts.autoload || []
 
-module.exports = fastifyPlugin((fastify, opts, done) => {
+  const beanify = Beanify(opts.beanify || {})
 
-  const autoLoad = opts.autoLoad || []
-
-  const beanify = new Beanify(opts)
-
-  for (let dir of autoLoad) {
-    beanify.register(beanifyAutoload, {
-      dir: path.join(process.cwd(), dir)
+  for (let load of loads) {
+    if (typeof dir === 'string') {
+      load = {
+        dir: load
+      }
+    }
+    beanify.register(AutoLoad, {
+      dir: path.join(process.cwd(), load.dir),
+      dirAsScope: load.dirAsScope || false
     })
   }
-
 
   fastify.addHook('onClose', () => {
     fastify.log.info('closing beanify')
@@ -25,33 +27,22 @@ module.exports = fastifyPlugin((fastify, opts, done) => {
     })
   })
 
-  fastify.decorate('beanify', beanify)
   fastify.decorateRequest('beanify', beanify)
   fastify.decorateReply('inject', function (opts) {
     return beanify
       .inject(opts)
-      .then((res) => {
-        this.send(res)
-        return res
+      .then(data => {
+        this.send(data)
+        return data
       })
-      .catch((err) => {
+      .catch(e => {
         this.code(400)
-        this.send(err)
+        this.send(e)
+        throw e
       })
   })
+  fastify.decorate('beanify', beanify)
+  beanify.decorate('$fastify', fastify)
 
-
-  beanify.decorate('fastify', fastify)
-  beanify.ready((err) => {
-    if (!err) {
-      beanify.addHook("onError", (err) => {
-        fastify.log.error(err)
-      })
-    } else {
-      fastify.log.error("beanify not ready:" + err.message)
-    }
-    done(err)
-  })
-}, {
-  name: 'fastify-beanify'
+  beanify.ready(done)
 })
